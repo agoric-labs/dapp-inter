@@ -68,3 +68,18 @@ jobs:
           git add $REFERENCED_UI_FILE
           git commit -m "Update DEPLOYED_HASH with new value"
           git push
+      - name: Checkout commit and push to deploy-production
+        if: env.NEW_VALUE != env.PREVIOUS_VALUE && env.URL_EXISTS == 'true'
+        run: |
+          # Define the path to the previous value file
+          REFERENCED_UI_FILE="./DEPLOYED_HASH"
+
+          # Read the commit hash from the DEPLOYED_HASH file
+          COMMIT_HASH=$(cat $REFERENCED_UI_FILE)
+
+          # Check out the commit
+          git checkout $COMMIT_HASH
+
+          # Create or update the deploy-production branch
+          git checkout -B deploy-production
+          git push -f origin deploy-production
