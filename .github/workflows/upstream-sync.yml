@@ -33,6 +33,7 @@ jobs:
         else
           echo "Upstream repository does not exist."
           echo "HAS_UPSTREAM=false" >> $GITHUB_ENV
+        fi
 
     - name: Add the upstream repository
       if: env.HAS_UPSTREAM == 'true'
