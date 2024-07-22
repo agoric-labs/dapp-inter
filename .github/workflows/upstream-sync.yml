@@ -1,4 +1,4 @@
-name: Upstream Sync
+name: Sync Release with Upstream
 
 on:
   schedule:
@@ -43,4 +43,15 @@ jobs:
 
     - name: Set up authentication
       run: |
-        git remote set-url origin https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository
+        git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACTOR: ${{ github.actor }}
+
+    - name: Merge upstream/main into forked repo main branch
+      run: |
+        git checkout -B release upstream/main
+        git push -f origin release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACTOR: ${{ github.actor }}
