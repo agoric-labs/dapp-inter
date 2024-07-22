@@ -76,14 +76,14 @@ jobs:
       - name: Commit DEPLOYED_HASH if value changed
         if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
         run: |
+          git fetch origin
+          git checkout main
+          
           # Define the path to the previous value file
           REFERENCED_UI_FILE="./DEPLOYED_HASH"
 
           # Save the new value to the DEPLOYED_HASH file
           echo "$NEW_VALUE" > $REFERENCED_UI_FILE
-
-          git fetch origin
-          git checkout main
 
           # Configure git and commit changes
           git config user.name "github-actions"
