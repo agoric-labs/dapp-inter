@@ -41,7 +41,8 @@ jobs:
 
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
-
+          NEW_REFERENCED_UI=ae140e2780f14d5de64217ab9a67a4cc9a3f4ed2
+          
           # Path to store the previous value
           OLD_REFERENCED_UI_FILE="./DEPLOYED_HASH"
 
