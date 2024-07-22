@@ -19,15 +19,15 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         persist-credentials: false # We disable this because we will be using a different token
 
-    - name: Check for UPSTREAM_URL in secrets
+    - name: Check for UPSTREAM_URL in environment
       id: check_upstream_url
       run: |
-        if [ -z "${{ secrets.UPSTREAM_URL }}" ]; then
-          echo "UPSTREAM_URL secret does not exist. Exiting."
+        if [ -z "${{ vars.UPSTREAM_URL }}" ]; then
+          echo "UPSTREAM_URL environment variable does not exist. Exiting."
           exit 1
         else
-          echo "UPSTREAM_URL secret found."
-          echo "UPSTREAM_URL=${{ secrets.UPSTREAM_URL }}" >> $GITHUB_ENV
+          echo "UPSTREAM_URL environment variable found."
+          echo "UPSTREAM_URL=${{ vars.UPSTREAM_URL }}" >> $GITHUB_ENV
         fi
 
     - name: Configure git for GitHub Actions
@@ -43,15 +43,4 @@ jobs:
 
     - name: Set up authentication
       run: |
-        git remote set-url origin https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_ACTOR: ${{ github.actor }}
-
-    - name: Merge upstream/main into forked repo main branch
-      run: |
-        git checkout -B release upstream/main
-        git push -f origin release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_ACTOR: ${{ github.actor }}
+        git remote set-url origin https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository
