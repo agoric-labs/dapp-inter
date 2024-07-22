@@ -19,16 +19,20 @@ jobs:
       - name: Check for CHAIN_URL
         id: check_chain_url
         run: |
-          if [ -z "${{ secrets.CHAIN_URL }}" ]; then
-            echo "CHAIN_URL is not set. Skipping workflow."
-            exit 0
+          if [ -z "${{ vars.CHAIN_URL }}" ]; then
+            echo "CHAIN_URL environment variable does not exist. Skipping workflow."
+            echo "URL_EXISTS=false" >> $GITHUB_ENV
+          else
+            echo "CHAIN_URL environment variable found."
+            echo "URL_EXISTS=true" >> $GITHUB_ENV
+            echo "CHAIN_URL=${{ vars.CHAIN_URL }}" >> $GITHUB_ENV
           fi
 
       - name: Run bash command
-        if: steps.check_chain_url.outcome == 'success'
+        if: env.URL_EXISTS == 'true'
         run: |
           # Define the URL from the environment variable
-          URL="${{ secrets.CHAIN_URL }}/agoric/vstorage/data/published.vaultFactory.governance"
+          URL="${{ env.CHAIN_URL }}/agoric/vstorage/data/published.vaultFactory.governance"
 
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
@@ -50,7 +54,7 @@ jobs:
           echo "PREVIOUS_VALUE=$OLD_REFERENCED_UI" >> $GITHUB_ENV
 
       - name: Update DEPLOYED_HASH if value changed
-        if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_chain_url.outcome == 'success'
+        if: env.NEW_VALUE != env.PREVIOUS_VALUE && env.URL_EXISTS == 'true'
         run: |
           # Define the path to the previous value file
           REFERENCED_UI_FILE="./DEPLOYED_HASH"
