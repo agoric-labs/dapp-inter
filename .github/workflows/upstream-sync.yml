@@ -3,7 +3,7 @@ name: Sync Release with Upstream
 on:
   schedule:
     # Runs every 5 minutes
-    - cron: '${{ vars.UPSTREAM_URL }}'
+    - cron: '*/5 * * * *'
 
   # Allows you to manually trigger the workflow from the Actions tab
   workflow_dispatch:
