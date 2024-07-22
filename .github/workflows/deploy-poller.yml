@@ -70,26 +70,16 @@ jobs:
           git add $REFERENCED_UI_FILE
           git commit -m "Update DEPLOYED_HASH with new value"
           git push
-      - name: Checkout commit and push to deploy-production
-        if: env.NEW_VALUE != env.PREVIOUS_VALUE && env.URL_EXISTS == 'true'
+      - name: Checkout the specific commit
+        if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_chain_url.outcome == 'success'
         run: |
-          # Define the path to the previous value file
-          REFERENCED_UI_FILE="./DEPLOYED_HASH"
+          # Check out the specific commit
+          git fetch origin
+          git checkout ${{ env.NEW_VALUE }}
+          
+          # Get the deploy branch name from the environment variable
+          DEPLOY_BRANCH="${{ vars.DEPLOY_BRANCH }}"
 
-          # Read the commit hash from the DEPLOYED_HASH file
-          COMMIT_HASH=$(cat $REFERENCED_UI_FILE)
-
-          # Verify the commit hash exists
-          if git cat-file -e $COMMIT_HASH; then
-            echo "Commit exists. Checking out and pushing to deploy-production."
-
-            # Check out the commit
-            git checkout $COMMIT_HASH
-
-            # Create or update the deploy-production branch
-            git checkout -B deploy-production
-            git push -f origin deploy-production
-          else
-            echo "Commit $COMMIT_HASH does not exist. Skipping branch update."
-            exit 0
-          fi
+          # Create or update the deploy branch
+          git checkout -B $DEPLOY_BRANCH
+          git push -f origin $DEPLOY_BRANCH
