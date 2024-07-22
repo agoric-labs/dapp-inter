@@ -77,9 +77,17 @@ jobs:
           # Read the commit hash from the DEPLOYED_HASH file
           COMMIT_HASH=$(cat $REFERENCED_UI_FILE)
 
-          # Check out the commit
-          git checkout $COMMIT_HASH
+          # Verify the commit hash exists
+          if git cat-file -e $COMMIT_HASH; then
+            echo "Commit exists. Checking out and pushing to deploy-production."
 
-          # Create or update the deploy-production branch
-          git checkout -B deploy-production
-          git push -f origin deploy-production
+            # Check out the commit
+            git checkout $COMMIT_HASH
+
+            # Create or update the deploy-production branch
+            git checkout -B deploy-production
+            git push -f origin deploy-production
+          else
+            echo "Commit $COMMIT_HASH does not exist. Skipping branch update."
+            exit 0
+          fi
