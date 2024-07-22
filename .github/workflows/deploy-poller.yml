@@ -18,7 +18,7 @@ jobs:
 
       - name: Check for CHAIN_URL
         run: |
-          if [ -z "${{ secrets.CHAIN_URL }}" ]; then
+          if [ -z "${{ vars.CHAIN_URL }}" ]; then
             echo "CHAIN_URL is not set. Exiting..."
             exit 1
           fi
@@ -26,7 +26,7 @@ jobs:
       - name: Run bash command
         run: |
           # Define the URL from environment variable
-          URL="${{ vars.CHAIN_URL }}"
+          URL="${{ vars.CHAIN_URL }}/agoric/vstorage/data/published.vaultFactory.governance"
 
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
