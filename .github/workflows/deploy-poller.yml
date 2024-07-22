@@ -35,8 +35,8 @@ jobs:
           URL="${{ env.CHAIN_URL }}/agoric/vstorage/data/published.vaultFactory.governance"
 
           # Fetch the new value
-          NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
-
+          # NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
+          NEW_REFERENCED_UI=99d889e4a02a0f3a3a17374bca66c647080ea66a
           # Path to store the previous value
           OLD_REFERENCED_UI_FILE="./DEPLOYED_HASH"
 
