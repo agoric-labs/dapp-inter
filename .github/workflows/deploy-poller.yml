@@ -82,6 +82,9 @@ jobs:
           # Save the new value to the DEPLOYED_HASH file
           echo "$NEW_VALUE" > $REFERENCED_UI_FILE
 
+          git fetch origin
+          git checkout main
+
           # Configure git and commit changes
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
