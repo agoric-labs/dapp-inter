@@ -36,17 +36,22 @@ jobs:
       - name: Check for required variables
         id: check_variables
         run: |
+          SKIP_RUN=true
+          
           if [ -z "${CHAIN_URL}" ]; then
             echo "CHAIN_URL is not set. Skipping workflow."
-            exit 1
+            SKIP_RUN=true
           fi
           
           if [ -z "${DEPLOY_BRANCH}" ]; then
             echo "CHAIN_URL is not set. Skipping workflow."
-            exit 1
+            SKIP_RUN=true
           fi
 
+          echo "SKIP_RUN=$SKIP_RUN" >> $GITHUB_ENV
+
       - name: Run bash command
+        if: env.SKIP_RUN == 'false'
         run: |
           # Define the URL from the environment variable
           URL="${{ vars.CHAIN_URL }}/agoric/vstorage/data/published.vaultFactory.governance"
@@ -78,14 +83,9 @@ jobs:
 
           echo "SHOULD_DEPLOY=$SHOULD_DEPLOY" >> $GITHUB_ENV
           echo "NEW_VALUE=$NEW_REFERENCED_UI" >> $GITHUB_ENV
-
-          echo $SHOULD_DEPLOY
-          if [ "$SHOULD_DEPLOY" == true ]; then
-            echo "true"
-          fi
-
+          
       - name: Checkout the specific commit and deploy
-        if: env.SHOULD_DEPLOY == 'true'
+        if: env.SHOULD_DEPLOY == 'true' && env.SKIP_RUN == 'false'
         run: |
           # Check out the specific commit
           git fetch origin
@@ -123,7 +123,7 @@ jobs:
           git push -f new-repo HEAD:${{ vars.DEPLOY_BRANCH }}
 
       - name: Update DEPLOYED_HASH
-        if: env.SHOULD_DEPLOY == 'true'
+        if: env.SHOULD_DEPLOY == 'true' && env.SKIP_RUN == 'false'
         run: |
           git fetch origin
           git checkout main
