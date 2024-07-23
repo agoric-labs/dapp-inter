@@ -53,9 +53,8 @@ jobs:
 
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
-          if [ -n "${COMMIT_URL}" ]; then
-            NEW_REFERENCED_UI="${COMMIT_URL}"
-            echo "NEW_REFERENCED_UI=${NEW_REFERENCED_UI}" >> $GITHUB_ENV
+          if [ -n "${{ github.event.inputs.COMMIT_URL }}" ]; then
+            NEW_REFERENCED_UI="${{ github.event.inputs.COMMIT_URL }}"
           fi
 
           # Path to store the previous value
