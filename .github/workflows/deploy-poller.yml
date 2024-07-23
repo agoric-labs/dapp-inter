@@ -82,6 +82,10 @@ jobs:
 
           git fetch new-repo
 
+          git checkout -b temp-branch origin/deploy-emerynet
+          git clean -fdx
+          git checkout $COMMIT_HASH
+
           git checkout new-repo/${{ vars.DEPLOY_BRANCH }} .github/workflows
           git commit -am "Ignore github workflowa"
 
