@@ -74,7 +74,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
           
            # Clone the old repository and checkout the specific commit
-          git clone --single-branch --branch main $REPO_URL old-repo
+          git clone --single-branch $REPO_URL old-repo
           cd old-repo
 
           # Configure the remote URL with credentials
