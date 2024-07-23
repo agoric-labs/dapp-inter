@@ -38,12 +38,12 @@ jobs:
         run: |
           if [ -z "${CHAIN_URL}" ]; then
             echo "CHAIN_URL is not set. Skipping workflow."
-            exit 0
+            exit 1
           fi
           
           if [ -z "${DEPLOY_BRANCH}" ]; then
             echo "CHAIN_URL is not set. Skipping workflow."
-            exit 0
+            exit 1
           fi
 
       - name: Run bash command
