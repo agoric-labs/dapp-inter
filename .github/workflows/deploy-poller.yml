@@ -79,7 +79,7 @@ jobs:
           git fetch new-repo
                     
           # Push the commit to the deploy branch in the new repository
-          git push -f new-repo HEAD:$refs/heads/{{ vars.DEPLOY_BRANCH }}
+          git push -f new-repo HEAD:refs/heads/${{ vars.DEPLOY_BRANCH }}
 
       - name: Commit DEPLOYED_HASH if value changed
         if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
