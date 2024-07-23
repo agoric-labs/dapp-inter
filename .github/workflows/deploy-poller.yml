@@ -84,7 +84,7 @@ jobs:
 
           git remote add old $REPO_URL
           git remote update
-          git checkout ${{ vars.DEPLOY_BRANCH }
+          git checkout ${{ vars.DEPLOY_BRANCH }}
 
           git merge --squash --allow-unrelated-histories old $COMMIT_HASH
 
