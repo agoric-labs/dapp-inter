@@ -8,11 +8,11 @@ on:
       CHAIN_URL:
         description: 'The URL of the chain'
         required: true
-        default: ''
+        default: 'https://emerynet.api.agoric.net'
       DEPLOY_BRANCH:
         description: 'The branch to deploy'
         required: true
-        default: ''
+        default: 'deploy-emerynet'
       COMMIT_URL:
         description: '(optional) Override ReferenceUI value with the url of the commit to deploy'
         required: false
