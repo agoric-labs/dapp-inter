@@ -43,7 +43,7 @@ jobs:
 
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
-          NEW_REFERENCED_UI=https://github.com/Agoric/product-tasks/commit/59c101669792b943172ffc2c5229344e2db36de5
+          NEW_REFERENCED_UI=https://github.com/Agoric/dapp-agoric-basics/commit/3c28a51c2d6f4b4769364b19025665d5a83dc699
           
           # Path to store the previous value
           OLD_REFERENCED_UI_FILE="./DEPLOYED_HASH"
