@@ -70,18 +70,23 @@ jobs:
           REPO_URL=$(echo "${{ env.NEW_VALUE }}" | sed -E 's|/commit/.*||').git
           COMMIT_HASH=$(echo "${{ env.NEW_VALUE }}" | awk -F'/commit/' '{print $2}')
           
-           # Clone the old repository and checkout the specific commit
-          git clone --single-branch --branch main $REPO_URL old-repo
-          cd old-repo
-          git checkout $COMMIT_HASH
+          #  # Clone the old repository and checkout the specific commit
+          # git clone --single-branch --branch main $REPO_URL old-repo
+          # cd old-repo
 
-          # Configure the remote URL with credentials
-          git remote add new-repo "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}s@github.com/${{ github.repository }}.git"
+          # # Configure the remote URL with credentials
+          # git remote add new-repo "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
 
-          git fetch new-repo
-                    
-          # Push the commit to the deploy branch in the new repository
-          git push -f new-repo HEAD:refs/heads/${{ vars.DEPLOY_BRANCH }}
+          # git fetch new-repo
+
+          # # Push the commit to the deploy branch in the new repository
+          # git push -f new-repo HEAD:refs/heads/${{ vars.DEPLOY_BRANCH }}
+
+          git remote add old $REPO_URL
+          git remote update
+          git checkout ${{ vars.DEPLOY_BRANCH }
+
+          git merge --squash --allow-unrelated-histories old $COMMIT_HASH
 
       - name: Commit DEPLOYED_HASH if value changed
         if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
