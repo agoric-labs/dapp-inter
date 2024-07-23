@@ -82,7 +82,7 @@ jobs:
           # # Push the commit to the deploy branch in the new repository
           # git push -f new-repo HEAD:refs/heads/${{ vars.DEPLOY_BRANCH }}
 
-          git checkout ${{ vars.DEPLOY_BRANCH }}
+          git checkout -B ${{ vars.DEPLOY_BRANCH }}
           git remote add old $REPO_URL
           git remote update
 
