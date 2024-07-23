@@ -89,14 +89,14 @@ jobs:
           git remote add old $REPO_URL
           git remote update
 
-          git merge --squash --allow-unrelated-histories -X theirs $COMMIT_HASH
+          git merge --squash --allow-unrelated-histories -X ours $COMMIT_HASH
           git checkout HEAD .github/workflows
 
           # Configure the remote URL with PAT_TOKEN
           # git remote set-url origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           
           # Push the changes to the deploy branch
-          git push -f origin ${{ vars.DEPLOY_BRANCH }}
+          git push -f origin
 
       - name: Commit DEPLOYED_HASH if value changed
         if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
