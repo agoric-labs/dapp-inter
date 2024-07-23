@@ -86,7 +86,7 @@ jobs:
           git commit -am "Ignore github workflowa"
 
           # # Push the commit to the deploy branch in the new repository
-          git push -f new-repo ${{ vars.DEPLOY_BRANCH }}
+          git push -f new-repo HEAD:${{ vars.DEPLOY_BRANCH }}
 
           # git checkout -B ${{ vars.DEPLOY_BRANCH }}
           # git remote add old $REPO_URL
