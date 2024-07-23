@@ -92,7 +92,7 @@ jobs:
           rm -rf .github/workflows
 
           # Mirror remote workflows
-          git checkout HEAD new-repo/.github/workflows
+          git checkout new-repo/${{ vars.DEPLOY_BRANCH }} .github/workflows
 
           git commit -am "Undo any changes to workflows"
 
