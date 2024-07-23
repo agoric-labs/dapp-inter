@@ -76,7 +76,7 @@ jobs:
           git checkout $COMMIT_HASH
 
           # Configure the remote URL with credentials
-          git remote add new-repo "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git remote add new-repo "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}s@github.com/${{ github.repository }}.git"
 
           git fetch new-repo
                     
