@@ -71,9 +71,9 @@ jobs:
 
           # Output the values for the next step
           if [ "$NEW_VALUE" != "$OLD_VALUE" ]; then
-            VALUE=true
+            SHOULD_DEPLOY=true
           else
-            VALUE=false
+            SHOULD_DEPLOY=false
           fi
 
           echo "SHOULD_DEPLOY=$SHOULD_DEPLOY" >> $GITHUB_ENV
