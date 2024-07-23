@@ -76,7 +76,7 @@ jobs:
           # Configure git for the new repository
           # Configure the remote URL with credentials
           TARGET_REPO_URL="https://github.com/${{ github.repository }}.git"
-          git remote add new-repo https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@${TARGET_REPO_URL}
+          git remote add new-repo ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@${TARGET_REPO_URL}
           
           git fetch new-repo
           git checkout -B ${{ vars.DEPLOY_BRANCH }}
