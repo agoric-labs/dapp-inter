@@ -82,7 +82,7 @@ jobs:
 
           git fetch new-repo
 
-          git checkout -b temp-branch origin/deploy-emerynet
+          git checkout -b temp-branch new-repo/deploy-emerynet
           git clean -fdx
           git checkout $COMMIT_HASH
 
