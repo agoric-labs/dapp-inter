@@ -77,10 +77,7 @@ jobs:
           git remote add new-repo "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           
           git fetch new-repo
-          git checkout -B ${{ vars.DEPLOY_BRANCH }}
-
-          git status
-
+          
           # Push the commit to the deploy branch in the new repository
           git push -f new-repo HEAD:${{ vars.DEPLOY_BRANCH }}
 
