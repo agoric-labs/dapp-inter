@@ -89,12 +89,11 @@ jobs:
           # .github/workflows that doesn't exist on the remote
 
           # Remove files not on the remote
-          git checkout -b temp-branch new-repo/deploy-emerynet
           rm -rf .github/workflows
+
+          # Mirror remote workflows
           git checkout HEAD .github/workflows
 
-          # Re-check out and commit
-          git checkout deploy
           git commit -am "Undo any changes to workflows"
 
           # # Push the commit to the deploy branch in the new repository
