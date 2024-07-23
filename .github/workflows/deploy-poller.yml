@@ -64,14 +64,23 @@ jobs:
         run: |
           # Check out the specific commit
           git fetch origin
-          git checkout ${{ env.NEW_VALUE }}
-          
-          # Get the deploy branch name from the environment variable
-          DEPLOY_BRANCH="${{ vars.DEPLOY_BRANCH }}"
 
-          # Create or update the deploy branch
-          git checkout -B $DEPLOY_BRANCH
-          git push -f origin $DEPLOY_BRANCH
+          TARGET_REPO_URL="${{ github.server_url }}/${{ github.repository }}.git"
+          REPO_URL=$(echo "${{ env.NEW_VALUE }}" | sed -E 's|/commit/.*||').git
+          COMMIT_HASH=$(echo "${{ env.NEW_VALUE }}" | awk -F'/commit/' '{print $2}')
+          
+           # Clone the old repository and checkout the specific commit
+          git clone --single-branch --branch main $REPO_URL old-repo
+          cd old-repo
+          git checkout $COMMIT_HASH
+
+          # Configure git for the new repository
+          git remote add new-repo $TARGET_REPO_URL
+          git fetch new-repo
+          git checkout -B ${{ vars.DEPLOY_BRANCH }}
+
+          # Push the commit to the deploy branch in the new repository
+          git push -f new-repo ${{ vars.DEPLOY_BRANCH }}
 
       - name: Commit DEPLOYED_HASH if value changed
         if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
