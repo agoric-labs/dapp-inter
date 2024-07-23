@@ -55,10 +55,7 @@ jobs:
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
           if [ ${{ github.event.inputs.COMMIT_URL }} ]; then
             NEW_REFERENCED_UI="${{ github.event.inputs.COMMIT_URL }}"
-            echo "hit"
           fi
-
-          echo $NEW_REFERENCED_UI
 
           # Path to store the previous value
           OLD_REFERENCED_UI_FILE="./DEPLOYED_HASH"
@@ -71,8 +68,6 @@ jobs:
             # File does not exist, set previous value to empty
             OLD_REFERENCED_UI=""
           fi
-
-          echo $OLD_VALUE
 
           # Output the values for the next step
           echo "SHOULD_DEPLOY=$NEW_VALUE != $OLD_VALUE" >> $GITHUB_ENV
