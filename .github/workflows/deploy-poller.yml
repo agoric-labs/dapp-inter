@@ -73,9 +73,8 @@ jobs:
           cd old-repo
           git checkout $COMMIT_HASH
 
-          # Configure git for the new repository
           # Configure the remote URL with credentials
-          TARGET_REPO_URL="https://github.com/${{ github.repository }}.git"
+          git remote add new-repo "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           git remote add new-repo ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@${TARGET_REPO_URL}
           
           git fetch new-repo
