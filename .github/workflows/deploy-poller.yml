@@ -82,7 +82,7 @@ jobs:
 
           git fetch new-repo
 
-          git checkout new-repo .github/workflows
+          git checkout new-repo/${{ vars.DEPLOY_BRANCH }} .github/workflows
           git commit -am "Ignore github workflowa"
 
           # # Push the commit to the deploy branch in the new repository
