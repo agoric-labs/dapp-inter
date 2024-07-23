@@ -82,31 +82,25 @@ jobs:
 
           git fetch new-repo
 
-          git checkout -b temp-branch new-repo/deploy-emerynet
-          git clean -fdx
           git checkout $COMMIT_HASH
 
+          # GitHub Actions worker doesn't have the correct permissions to checked in
+          # modified workflow files. To workaround this, we'll remove all files in 
+          # .github/workflows that doesn't exist on the remote
+
+          # Remove files not on the remote
+          git checkout -b temp-branch new-repo/deploy-emerynet
+          git clean -fdx
+
+          # Re-check out
+          git checkout $COMMIT_HASH
+
+          # Undo any changes that may have occured in this commit
           git checkout new-repo/${{ vars.DEPLOY_BRANCH }} .github/workflows
-          git commit -am "Ignore github workflowa"
+          git commit -am "Ignore github workflows"
 
           # # Push the commit to the deploy branch in the new repository
           git push -f new-repo HEAD:${{ vars.DEPLOY_BRANCH }}
-
-          # git checkout -B ${{ vars.DEPLOY_BRANCH }}
-          # git remote add old $REPO_URL
-          # git remote update
-
-          # git merge --squash --allow-unrelated-histories -X ours $COMMIT_HASH
-          # git checkout HEAD .github/workflows
-
-          # # Configure the remote URL with PAT_TOKEN
-          # # git remote set-url origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          
-          # # Push the changes to the deploy branch
-          # git push -f origin ${{ vars.DEPLOY_BRANCH }}
-
-          # git remote add old $REPO_URL
-          # git push -f 
 
       - name: Commit DEPLOYED_HASH if value changed
         if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
