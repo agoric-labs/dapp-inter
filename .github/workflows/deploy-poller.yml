@@ -80,7 +80,7 @@ jobs:
           echo "NEW_VALUE=$NEW_REFERENCED_UI" >> $GITHUB_ENV
 
           echo $SHOULD_DEPLOY
-          if [ "$SHOULD_DEPLOY" == "$rue" ]; then
+          if [ "$SHOULD_DEPLOY" == "true" ]; then
             echo "true"
           fi
 
