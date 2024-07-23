@@ -86,7 +86,7 @@ jobs:
           git remote update
           git checkout ${{ vars.DEPLOY_BRANCH }}
 
-          git merge --squash --allow-unrelated-histories old $COMMIT_HASH
+          git merge --squash --allow-unrelated-histories $COMMIT_HASH
 
       - name: Commit DEPLOYED_HASH if value changed
         if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
