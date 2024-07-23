@@ -53,8 +53,8 @@ jobs:
 
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
-          if [ ${{ github.event.inputs.COMMIT_URL }} ]; then
-            NEW_REFERENCED_UI=${{ github.event.inputs.COMMIT_URL }}
+          if [ -f ${{ github.event.inputs.COMMIT_URL }} ]; then
+            NEW_REFERENCED_UI="${{ github.event.inputs.COMMIT_URL }}"
           fi
 
           # Path to store the previous value
