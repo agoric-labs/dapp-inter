@@ -90,7 +90,7 @@ jobs:
 
           # Remove files not on the remote
           git checkout -b temp-branch new-repo/deploy-emerynet
-          git clean -fdx
+          git clean -fd
 
           # Re-check out
           git checkout $COMMIT_HASH
