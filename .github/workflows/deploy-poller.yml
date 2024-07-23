@@ -89,8 +89,8 @@ jobs:
           git merge --squash --allow-unrelated-histories $COMMIT_HASH
 
           # Configure git and commit changes
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
           git push -f
 
       - name: Commit DEPLOYED_HASH if value changed
