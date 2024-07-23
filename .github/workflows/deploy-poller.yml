@@ -90,6 +90,7 @@ jobs:
           git remote update
 
           git merge --squash --allow-unrelated-histories -X theirs $COMMIT_HASH
+          git checkout HEAD .github/workflows
 
           # Configure the remote URL with PAT_TOKEN
           # git remote set-url origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
