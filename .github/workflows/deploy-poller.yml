@@ -70,7 +70,7 @@ jobs:
           fi
 
           # Output the values for the next step
-          if [ "$NEW_VALUE" != "$OLD_VALUE" ]; then
+          if [ "$NEW_REFERENCED_UI" != "$OLD_REFERENCED_UI" ]; then
             SHOULD_DEPLOY=true
           else
             SHOULD_DEPLOY=false
