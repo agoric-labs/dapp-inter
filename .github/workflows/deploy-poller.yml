@@ -65,7 +65,7 @@ jobs:
           # Check out the specific commit
           git fetch origin
           
-          TARGET_REPO_URL="${{ github.server_url }}/${{ github.repository }}.git"
+          TARGET_REPO_URL="https://github.com/${{ github.repository }}.git"
           REPO_URL=$(echo "${{ env.NEW_VALUE }}" | sed -E 's|/commit/.*||').git
           COMMIT_HASH=$(echo "${{ env.NEW_VALUE }}" | awk -F'/commit/' '{print $2}')
           
@@ -76,8 +76,7 @@ jobs:
 
           # Configure git for the new repository
           git remote add new-repo $TARGET_REPO_URL
-          git remote set-url new-repo ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@$TARGET_REPO_URL
-          git fetch new-repo
+          git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@${TARGET_REPO_URL}          git fetch new-repo
           git checkout -B ${{ vars.DEPLOY_BRANCH }}
 
           # Push the commit to the deploy branch in the new repository
