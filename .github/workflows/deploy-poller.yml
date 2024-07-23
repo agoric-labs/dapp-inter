@@ -36,7 +36,7 @@ jobs:
       - name: Check for required variables
         id: check_variables
         run: |
-          SKIP_RUN=true
+          SKIP_RUN=false
           
           if [ -z "${CHAIN_URL}" ]; then
             echo "CHAIN_URL is not set. Skipping workflow."
