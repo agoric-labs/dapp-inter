@@ -90,13 +90,11 @@ jobs:
 
           # Remove files not on the remote
           git checkout -b temp-branch new-repo/deploy-emerynet
-          git clean -fd
+          rm -rf .github/workflows
+          git checkout HEAD .github/workflows
 
-          # Re-check out
+          # Re-check out and commit
           git checkout $COMMIT_HASH
-
-          # Undo any changes that may have occured in this commit
-          git checkout new-repo/${{ vars.DEPLOY_BRANCH }} .github/workflows
           git commit -am "Ignore github workflows"
 
           # # Push the commit to the deploy branch in the new repository
