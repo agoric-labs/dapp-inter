@@ -73,11 +73,11 @@ jobs:
           cd old-repo
           git checkout $COMMIT_HASH
 
+          git status
+
           # Configure the remote URL with credentials
           git remote add new-repo "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          
-          git fetch new-repo
-          
+                    
           # Push the commit to the deploy branch in the new repository
           git push -f new-repo HEAD:${{ vars.DEPLOY_BRANCH }}
 
