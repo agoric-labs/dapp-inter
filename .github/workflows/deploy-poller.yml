@@ -70,9 +70,13 @@ jobs:
           fi
 
           # Output the values for the next step
-          SHOULD_DEPLOY=$NEW_VALUE!=$OLD_VALUE
+          if [ "$NEW_VALUE" != "$OLD_VALUE" ]; then
+            VALUE=true
+          else
+            VALUE=false
+          fi
+
           echo "SHOULD_DEPLOY=$SHOULD_DEPLOY" >> $GITHUB_ENV
-          echo $SHOULD_DEPLOY
           echo "NEW_VALUE=$NEW_REFERENCED_UI" >> $GITHUB_ENV
 
       - name: Checkout the specific commit and deploy
