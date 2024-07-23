@@ -89,7 +89,7 @@ jobs:
           git remote add old $REPO_URL
           git remote update
 
-          git merge --squash --allow-unrelated-histories $COMMIT_HASH
+          git merge --squash --allow-unrelated-histories -X theirs $COMMIT_HASH
 
           # Configure the remote URL with PAT_TOKEN
           # git remote set-url origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
