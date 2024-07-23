@@ -96,7 +96,7 @@ jobs:
           # git remote set-url origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           
           # Push the changes to the deploy branch
-          git push -f origin
+          git push -f origin ${{ vars.DEPLOY_BRANCH }}
 
       - name: Commit DEPLOYED_HASH if value changed
         if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
