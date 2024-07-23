@@ -77,6 +77,7 @@ jobs:
           fi
 
           echo "SHOULD_DEPLOY=$SHOULD_DEPLOY" >> $GITHUB_ENV
+          echo $SHOULD_DEPLOY
           echo "NEW_VALUE=$NEW_REFERENCED_UI" >> $GITHUB_ENV
 
       - name: Checkout the specific commit and deploy
