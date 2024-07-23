@@ -7,11 +7,11 @@ on:
     inputs:
       CHAIN_URL:
         description: 'The URL of the chain'
-        required: true
+        required: false
         default: 'https://emerynet.api.agoric.net'
       DEPLOY_BRANCH:
         description: 'The branch to deploy'
-        required: true
+        required: false
         default: 'deploy-emerynet'
       COMMIT_URL:
         description: '(optional) Override ReferenceUI value with the url of the commit to deploy'
@@ -53,9 +53,9 @@ jobs:
 
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
-
-          if [ -z "${{ github.event.inputs.COMMIT_URL }}" ]; then
-            NEW_REFERENCED_UI="${{ github.event.inputs.COMMIT_URL }}"
+          if [ -n "${COMMIT_URL}" ]; then
+            NEW_REFERENCED_UI="${COMMIT_URL}"
+            echo "NEW_REFERENCED_UI=${NEW_REFERENCED_UI}" >> $GITHUB_ENV
           fi
 
           # Path to store the previous value
