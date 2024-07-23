@@ -1,4 +1,4 @@
-name: Poll for changes to start a deploy to CF
+name: Update Deploy Branch
 
 on:
   schedule:
