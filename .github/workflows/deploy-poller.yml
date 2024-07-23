@@ -55,7 +55,7 @@ jobs:
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
           if [ -n ${{ github.event.inputs.COMMIT_URL }} ]; then
             NEW_REFERENCED_UI="${{ github.event.inputs.COMMIT_URL }}"
-            echo "HIT1
+            echo "HIT1"
           else
             echo "GIT@"  
           fi
