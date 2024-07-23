@@ -8,7 +8,7 @@ on:
       CHAIN_URL:
         description: 'The URL of the chain'
         required: false
-        default: 'https://emerynet.api.agoric.net'
+        default: ''
       DEPLOY_BRANCH:
         description: 'The branch to deploy'
         required: false
