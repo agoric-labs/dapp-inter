@@ -69,6 +69,9 @@ jobs:
           
           REPO_URL=$(echo "${{ env.NEW_VALUE }}" | sed -E 's|/commit/.*||').git
           COMMIT_HASH=$(echo "${{ env.NEW_VALUE }}" | awk -F'/commit/' '{print $2}')
+
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
           
           #  # Clone the old repository and checkout the specific commit
           # git clone --single-branch --branch main $REPO_URL old-repo
@@ -88,9 +91,6 @@ jobs:
 
           git merge --squash --allow-unrelated-histories $COMMIT_HASH
 
-          # Configure git and commit changes
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
           git push -f
 
       - name: Commit DEPLOYED_HASH if value changed
