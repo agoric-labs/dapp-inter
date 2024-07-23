@@ -79,6 +79,8 @@ jobs:
           git fetch new-repo
           git checkout -B ${{ vars.DEPLOY_BRANCH }}
 
+          git status
+
           # Push the commit to the deploy branch in the new repository
           git push -f new-repo HEAD:${{ vars.DEPLOY_BRANCH }}
 
