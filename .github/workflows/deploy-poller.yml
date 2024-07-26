@@ -80,6 +80,9 @@ jobs:
             OLD_REFERENCED_UI=""
           fi
 
+          echo $NEW_REFERENCED_UI
+          echo $OLD_REFERENCED_UI
+
           # Output the values for the next step
           if [ "$NEW_REFERENCED_UI" != "$OLD_REFERENCED_UI" ]; then
             SHOULD_DEPLOY=true
