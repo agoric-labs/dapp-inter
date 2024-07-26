@@ -58,7 +58,10 @@ jobs:
 
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
-
+          if [ ${{ github.event.inputs.COMMIT_URL }} ]; then
+            NEW_REFERENCED_UI="${{ github.event.inputs.COMMIT_URL }}"
+          fi
+          
           # Check if the deploy branch exists on the remote
           if git ls-remote --exit-code --heads origin ${{ env.DEPLOY_BRANCH }}; then
             echo "Deploy branch exists. Checking out the branch."
