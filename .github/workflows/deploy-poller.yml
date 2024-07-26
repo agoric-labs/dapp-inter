@@ -59,7 +59,7 @@ jobs:
           # Fetch the new value
           NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
 
-           # Check if the deploy branch exists on the remote
+          # Check if the deploy branch exists on the remote
           if git ls-remote --exit-code --heads origin ${{ env.DEPLOY_BRANCH }}; then
             echo "Deploy branch exists. Checking out the branch."
             # Path to store the previous value
@@ -120,8 +120,11 @@ jobs:
           # Remove files not on the remote
           rm -rf .github/workflows
 
-          # Mirror remote workflows
-          git checkout new-repo/${{ env.DEPLOY_BRANCH }} .github/workflows
+          # Check if the deploy branch exists on the remote
+          if git ls-remote --exit-code --heads origin ${{ env.DEPLOY_BRANCH }}; then
+            # Mirror remote workflows
+            git checkout new-repo/${{ env.DEPLOY_BRANCH }} .github/workflows
+          fi
           
           # Save the new value to the DEPLOYED_HASH file
           echo "$NEW_VALUE" > $REFERENCED_UI_FILE
