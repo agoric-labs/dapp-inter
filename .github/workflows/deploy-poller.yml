@@ -65,6 +65,10 @@ jobs:
           # Check if the deploy branch exists on the remote
           if git ls-remote --exit-code --heads origin ${{ env.DEPLOY_BRANCH }}; then
             echo "Deploy branch exists. Checking out the branch."
+            
+            git fetch origin
+            git checkout ${{ env.DEPLOY_BRANCH }}
+            
             # Path to store the previous value
             OLD_REFERENCED_UI_FILE="./DEPLOYED_HASH"
 
