@@ -134,27 +134,9 @@ jobs:
           
           # Save the new value to the DEPLOYED_HASH file
           echo "$NEW_VALUE" > ./DEPLOYED_HASH
+          git add ./DEPLOYED_HASH
 
           git commit -am "Prepare branch for deploy"
 
           # # Push the commit to the deploy branch in the new repository
           git push -f new-repo HEAD:${{ env.DEPLOY_BRANCH }}
-
-      - name: Update DEPLOYED_HASH
-        if: env.SHOULD_DEPLOY == 'true' && env.SKIP_RUN == 'false'
-        run: |
-          git fetch origin
-          git checkout main
-          
-          # Define the path to the previous value file
-          REFERENCED_UI_FILE="./DEPLOYED_HASH"
-
-          # Save the new value to the DEPLOYED_HASH file
-          echo "$NEW_VALUE" > $REFERENCED_UI_FILE
-
-          # Configure git and commit changes
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add $REFERENCED_UI_FILE
-          git commit -m "Update DEPLOYED_HASH with new value"
-          git push
