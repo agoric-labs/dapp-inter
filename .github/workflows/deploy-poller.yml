@@ -1,0 +1,118 @@
+name: Poll for changes to start a deploy to CF
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Runs every 5 minutes
+  workflow_dispatch:  # Allows manual triggering of the workflow
+
+jobs:
+  run-command:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Check for required variables
+        id: check_variables
+        run: |
+          if [ -z "${{ vars.CHAIN_URL }}" ]; then
+            echo "CHAIN_URL is not set. Skipping workflow."
+            exit 0
+          fi
+          
+          if [ -z "${{ vars.DEPLOY_BRANCH }}" ]; then
+            echo "DEPLOY_BRANCH environment variable does not exist."
+            echo "HAS_DEPLOY_BRANCH=false" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_BRANCH environment variable found."
+            echo "HAS_DEPLOY_BRANCH=true" >> $GITHUB_ENV
+            echo "DEPLOY_BRANCH=${{ vars.DEPLOY_BRANCH }}" >> $GITHUB_ENV
+          fi
+
+      - name: Run bash command
+        if: steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
+        run: |
+          # Define the URL from the environment variable
+          URL="${{ vars.CHAIN_URL }}/agoric/vstorage/data/published.vaultFactory.governance"
+
+          # Fetch the new value
+          NEW_REFERENCED_UI=$(curl -s $URL | jq -r '.value' | jq -r '.values[]' | jq -r .body | sed 's/^#//' | jq -r .current.ReferencedUI.value)
+          NEW_REFERENCED_UI="https://github.com/Agoric/product-tasks/commit/59c101669792b943172ffc2c5229344e2db36de5"
+          
+          # Path to store the previous value
+          OLD_REFERENCED_UI_FILE="./DEPLOYED_HASH"
+
+          # Check if the previous value exists
+          if [ -f "$OLD_REFERENCED_UI_FILE" ]; then
+            # Read the previous value
+            OLD_REFERENCED_UI=$(cat $OLD_REFERENCED_UI_FILE)
+          else
+            # File does not exist, set previous value to empty
+            OLD_REFERENCED_UI=""
+          fi
+
+          # Output the values for the next step
+          echo "NEW_VALUE=$NEW_REFERENCED_UI" >> $GITHUB_ENV
+          echo "PREVIOUS_VALUE=$OLD_REFERENCED_UI" >> $GITHUB_ENV
+
+      - name: Checkout the specific commit and deploy
+        if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
+        run: |
+          # Check out the specific commit
+          git fetch origin
+          
+          REPO_URL=$(echo "${{ env.NEW_VALUE }}" | sed -E 's|/commit/.*||').git
+          COMMIT_HASH=$(echo "${{ env.NEW_VALUE }}" | awk -F'/commit/' '{print $2}')
+
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          
+          #  # Clone the old repository and checkout the specific commit
+          # git clone --single-branch --branch main $REPO_URL old-repo
+          # cd old-repo
+
+          # # Configure the remote URL with credentials
+          # git remote add new-repo "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+
+          # git fetch new-repo
+
+          # # Push the commit to the deploy branch in the new repository
+          # git push -f new-repo HEAD:refs/heads/${{ vars.DEPLOY_BRANCH }}
+
+          git checkout -B ${{ vars.DEPLOY_BRANCH }}
+          git remote add old $REPO_URL
+          git remote update
+
+          git merge --squash --allow-unrelated-histories -X ours $COMMIT_HASH
+          git checkout HEAD .github/workflows
+
+          # Configure the remote URL with PAT_TOKEN
+          # git remote set-url origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          
+          # Push the changes to the deploy branch
+          git push -f origin ${{ vars.DEPLOY_BRANCH }}
+
+      - name: Commit DEPLOYED_HASH if value changed
+        if: env.NEW_VALUE != env.PREVIOUS_VALUE && steps.check_variables.outcome == 'success' && env.HAS_DEPLOY_BRANCH == 'true'
+        run: |
+          git fetch origin
+          git checkout main
+          
+          # Define the path to the previous value file
+          REFERENCED_UI_FILE="./DEPLOYED_HASH"
+
+          # Save the new value to the DEPLOYED_HASH file
+          echo "$NEW_VALUE" > $REFERENCED_UI_FILE
+
+          # Configure git and commit changes
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add $REFERENCED_UI_FILE
+          git commit -m "Update DEPLOYED_HASH with new value"
+          git push
