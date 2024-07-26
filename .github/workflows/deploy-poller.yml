@@ -23,8 +23,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CHAIN_URL: ${{ vars.CHAIN_URL || github.event.inputs.CHAIN_URL }}
-      DEPLOY_BRANCH: ${{ vars.DEPLOY_BRANCH || github.event.inputs.DEPLOY_BRANCH }}
+      CHAIN_URL: ${{ github.event.inputs.CHAIN_URL || vars.CHAIN_URL }}
+      DEPLOY_BRANCH: ${{ github.event.inputs.DEPLOY_BRANCH || vars.DEPLOY_BRANCH }}
 
     steps:
       - name: Checkout repository
@@ -75,6 +75,9 @@ jobs:
             fi
           else
             echo "Deploy branch does not exist. Skipping checkout."
+            
+            # File does not exist, set previous value to empty
+            OLD_REFERENCED_UI=""
           fi
 
           # Output the values for the next step
