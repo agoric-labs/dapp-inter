@@ -2,17 +2,17 @@ name: Update Deploy Branch
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Runs every 5 minutes
-  workflow_dispatch:  # Allows manual triggering of the workflow
+    - cron: '*/5 * * * *' # Runs every 5 minutes
+  workflow_dispatch: # Allows manual triggering of the workflow
     inputs:
       CHAIN_URL:
-        description: 'The URL of the chain'
+        description: 'The URL of the chain. Example: https://emerynet.api.agoric.net'
         required: false
-        default: 'https://emerynet.api.agoric.net'
+        default: ''
       DEPLOY_BRANCH:
-        description: 'The branch to deploy'
+        description: 'The branch to deploy. Example: deploy-emerynet'
         required: false
-        default: 'deploy-emerynet'
+        default: ''
       COMMIT_URL:
         description: '(optional) Override ReferenceUI value with the url of the commit to deploy'
         required: false
@@ -37,12 +37,12 @@ jobs:
         id: check_variables
         run: |
           SKIP_RUN=false
-          
+
           if [ -z "${CHAIN_URL}" ]; then
             echo "CHAIN_URL is not set. Skipping workflow."
             SKIP_RUN=true
           fi
-          
+
           if [ -z "${DEPLOY_BRANCH}" ]; then
             echo "CHAIN_URL is not set. Skipping workflow."
             SKIP_RUN=true
@@ -50,7 +50,7 @@ jobs:
 
           echo "SKIP_RUN=$SKIP_RUN" >> $GITHUB_ENV
 
-      - name: Run bash command
+      - name: Check if deploy branch needs to be updated
         if: env.SKIP_RUN == 'false'
         run: |
           # Define the URL from the environment variable
@@ -61,7 +61,7 @@ jobs:
           if [ ${{ github.event.inputs.COMMIT_URL }} ]; then
             NEW_REFERENCED_UI="${{ github.event.inputs.COMMIT_URL }}"
           fi
-          
+
           # Check if the deploy branch exists on the remote
           if git ls-remote --exit-code --heads origin ${{ env.DEPLOY_BRANCH }}; then
             echo "Deploy branch exists. Checking out the branch."
@@ -87,8 +87,8 @@ jobs:
             OLD_REFERENCED_UI=""
           fi
 
-          echo $NEW_REFERENCED_UI
-          echo $OLD_REFERENCED_UI
+          echo "New value: $NEW_REFERENCED_UI"
+          echo "Old value: $OLD_REFERENCED_UI"
 
           # Output the values for the next step
           if [ "$NEW_REFERENCED_UI" != "$OLD_REFERENCED_UI" ]; then
@@ -99,19 +99,19 @@ jobs:
 
           echo "SHOULD_DEPLOY=$SHOULD_DEPLOY" >> $GITHUB_ENV
           echo "NEW_VALUE=$NEW_REFERENCED_UI" >> $GITHUB_ENV
-          
-      - name: Checkout the specific commit and deploy
+
+      - name: Deploy commit to branch
         if: env.SHOULD_DEPLOY == 'true' && env.SKIP_RUN == 'false'
         run: |
           # Check out the specific commit
           git fetch origin
-          
+
           REPO_URL=$(echo "${{ env.NEW_VALUE }}" | sed -E 's|/commit/.*||').git
           COMMIT_HASH=$(echo "${{ env.NEW_VALUE }}" | awk -F'/commit/' '{print $2}')
 
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          
+
            # Clone the old repository and checkout the specific commit
           git clone --single-branch $REPO_URL old-repo
           cd old-repo
@@ -132,10 +132,12 @@ jobs:
 
           # Check if the deploy branch exists on the remote
           if git ls-remote --exit-code --heads origin ${{ env.DEPLOY_BRANCH }}; then
-            # Mirror remote workflows
-            git checkout new-repo/${{ env.DEPLOY_BRANCH }} .github/workflows
+            # Mirror remote workflows if they exist
+            if git ls-tree --name-only -r new-repo/${{ vars.DEPLOY_BRANCH }}:.github/workflows &> /dev/null; then
+              git checkout new-repo/${{ vars.DEPLOY_BRANCH }} .github/workflows
+            fi
           fi
-          
+
           # Save the new value to the DEPLOYED_HASH file
           echo "$NEW_VALUE" > ./DEPLOYED_HASH
           git add ./DEPLOYED_HASH
