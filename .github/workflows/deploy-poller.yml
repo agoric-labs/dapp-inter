@@ -133,7 +133,7 @@ jobs:
           fi
           
           # Save the new value to the DEPLOYED_HASH file
-          echo "$NEW_VALUE" > $REFERENCED_UI_FILE
+          echo "$NEW_VALUE" > ./DEPLOYED_HASH
 
           git commit -am "Prepare branch for deploy"
 
