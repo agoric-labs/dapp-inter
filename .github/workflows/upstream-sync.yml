@@ -79,10 +79,8 @@ jobs:
 
           # Check if the deploy branch exists on the remote
           if git ls-remote --exit-code --heads origin ${{ env.UPSTREAM_SYNC_BRANCH_NAME }}; then
-            echo "exists"
             # Mirror remote workflows if they exist
-            if git ls-tree --name-only -r new-repo/${{ vars.UPSTREAM_SYNC_BRANCH_NAME }}:.github/workflows &> /dev/null; then
-              echo "checked out"
+            if git ls-tree --name-only -r origin/${{ vars.UPSTREAM_SYNC_BRANCH_NAME }}:.github/workflows &> /dev/null; then
               git checkout origin/${{ vars.UPSTREAM_SYNC_BRANCH_NAME }} .github/workflows
             fi
           fi
