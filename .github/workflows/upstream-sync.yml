@@ -78,6 +78,7 @@ jobs:
           if git ls-remote --exit-code --heads origin ${{ env.UPSTREAM_SYNC_BRANCH_NAME }}; then
             # Mirror remote workflows if they exist
             if git ls-tree --name-only -r origin/${{ env.UPSTREAM_SYNC_BRANCH_NAME }}:.github/workflows &> /dev/null; then
+              echo "hit"
               git checkout origin/${{ env.UPSTREAM_SYNC_BRANCH_NAME }} .github/workflows
             fi
           fi
