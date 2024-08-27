@@ -67,12 +67,6 @@ jobs:
             git diff --quiet upstream/main upstream/main -- . ':(exclude).github/workflows' || echo "CHANGES_DETECTED=false" >> $GITHUB_ENV
           fi
 
-      - name: Check for differences between local and upstream branch, excluding .github/workflows
-        if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true'
-        run: |
-          git fetch upstream
-          git diff --quiet origin/${{ env.UPSTREAM_SYNC_BRANCH_NAME }} upstream/main -- . ':(exclude).github/workflows' || echo "CHANGES_DETECTED=true" >> $GITHUB_ENV
-
       - name: Fetch all branches from the upstream repository
         if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true' && env.CHANGES_DETECTED == 'true'
         run: git fetch upstream
