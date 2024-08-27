@@ -50,23 +50,21 @@ jobs:
         if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true'
         run: git remote add upstream ${{ env.UPSTREAM_URL }}
 
-      - name: Check if deploy branch exists on remote
-        if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true'
-        run: |
-          if git ls-remote --exit-code --heads origin ${{ env.UPSTREAM_SYNC_BRANCH_NAME }}; then
-            echo "DEPLOY_BRANCH_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "DEPLOY_BRANCH_EXISTS=false" >> $GITHUB_ENV
-          fi
-
       - name: Check for differences between local and upstream branch, excluding .github/workflows
         if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true'
         run: |
           git fetch upstream
-          if [ "$GITHUB_ENV" = "DEPLOY_BRANCH_EXISTS=true" ]; then
+          git fetch origin
+
+          # Check if the branch exists on the remote
+          if git show-ref --verify --quiet refs/remotes/origin/${{ env.UPSTREAM_SYNC_BRANCH_NAME }}; then
+            echo "Branch ${{ env.UPSTREAM_SYNC_BRANCH_NAME }} exists on remote."
+            # Compare origin branch with upstream, excluding .github/workflows
             git diff --quiet origin/${{ env.UPSTREAM_SYNC_BRANCH_NAME }} upstream/main -- . ':(exclude).github/workflows' || echo "CHANGES_DETECTED=true" >> $GITHUB_ENV
           else
-            git diff --quiet upstream/main -- . ':(exclude).github/workflows' || echo "CHANGES_DETECTED=true" >> $GITHUB_ENV
+            echo "Branch ${{ env.UPSTREAM_SYNC_BRANCH_NAME }} does not exist on remote."
+            # Compare upstream/main with itself to force no changes
+            git diff --quiet upstream/main upstream/main -- . ':(exclude).github/workflows' || echo "CHANGES_DETECTED=false" >> $GITHUB_ENV
           fi
 
       - name: Check for differences between local and upstream branch, excluding .github/workflows
