@@ -54,8 +54,14 @@ jobs:
       if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true'
       run: git fetch upstream
 
+    - name: Check for differences between local and upstream branch
+      if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true' && env.CHANGES_DETECTED == 'true'
+      id: check_diff
+      run: |
+        git diff --quiet origin/${{ env.UPSTREAM_SYNC_BRANCH_NAME }} upstream/main || echo "CHANGES_DETECTED=true" >> $GITHUB_ENV
+
     - name: Set up authentication
-      if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true'
+      if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true' && env.CHANGES_DETECTED == 'true'
       run: |
         git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
       env:
@@ -63,7 +69,7 @@ jobs:
         GITHUB_ACTOR: ${{ github.actor }}
 
     - name: Merge upstream/main into forked repo branch
-      if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true'
+      if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true' && env.CHANGES_DETECTED == 'true'
       run: |
         git checkout -B ${{ env.UPSTREAM_SYNC_BRANCH_NAME }} upstream/main
         git push -f origin ${{ env.UPSTREAM_SYNC_BRANCH_NAME }}
