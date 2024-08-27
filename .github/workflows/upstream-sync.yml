@@ -57,6 +57,7 @@ jobs:
             echo "DEPLOY_BRANCH_EXISTS=true" >> $GITHUB_ENV
           else
             echo "DEPLOY_BRANCH_EXISTS=false" >> $GITHUB_ENV
+          fi
 
       - name: Check for differences between local and upstream branch, excluding .github/workflows
         if: env.HAS_UPSTREAM == 'true' && env.HAS_SYNC_BRANCH == 'true'
